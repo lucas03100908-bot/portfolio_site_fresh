@@ -1,41 +1,31 @@
 "use client";
 
-import { memo, useEffect, useRef } from "react";
-import ShowreelSection from "./ShowreelSection";
-import ProfileSection from "./ProfileSection";
+import { memo } from "react";
+import dynamic from "next/dynamic";
+
+const ShowreelSection = dynamic(() => import("./ShowreelSection"), {
+  ssr: false,
+  loading: () => <div className="min-h-[100svh] bg-[#02060b] animate-pulse" />,
+});
+
+const ProfileSection = dynamic(() => import("./ProfileSection"), {
+  ssr: false,
+  loading: () => <div className="min-h-[100svh] bg-[#F3F4F6] animate-pulse" />,
+});
 
 interface HomeAboutSectionProps {
   isTouchLayout: boolean;
-  onMediaZoneActiveChange?: (isActive: boolean) => void;
+  onProfileVisibleChange?: (isActive: boolean) => void;
   suspendMedia?: boolean;
 }
 
 function HomeAboutSection({
   isTouchLayout,
-  onMediaZoneActiveChange,
+  onProfileVisibleChange,
   suspendMedia = false,
 }: HomeAboutSectionProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || !onMediaZoneActiveChange) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Media zone is active when any part of about/showreel is visible
-        const isVisible = entries.some(entry => entry.isIntersecting);
-        onMediaZoneActiveChange(isVisible && window.scrollY > 100);
-      },
-      { threshold: 0.01 }
-    );
-
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, [onMediaZoneActiveChange]);
-
   return (
-    <div ref={containerRef} className="relative z-20">
+    <div className="relative z-20">
       {/* 1. Dark Showreel Experience */}
       <ShowreelSection 
         isTouchLayout={isTouchLayout} 
@@ -44,7 +34,9 @@ function HomeAboutSection({
 
       {/* 2. Transition to Light Profile Experience */}
       <ProfileSection 
-        isTouchLayout={isTouchLayout} 
+        isTouchLayout={isTouchLayout}
+        onVisibilityChange={onProfileVisibleChange} 
+        suspendMedia={suspendMedia}
       />
     </div>
   );

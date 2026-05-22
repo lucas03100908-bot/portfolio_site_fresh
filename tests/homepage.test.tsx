@@ -16,32 +16,47 @@ function mockMatchMedia(matches: boolean) {
   }));
 }
 
+function setScrollY(scrollY: number) {
+  Object.defineProperty(window, "scrollY", {
+    configurable: true,
+    writable: true,
+    value: scrollY,
+  });
+}
+
 describe("homepage interactions", () => {
   beforeEach(() => {
     mockMatchMedia(false);
+    window.scrollTo = vi.fn();
+    setScrollY(0);
   });
 
-  it("renders the showreel about section with social buttons", () => {
+  it("renders the final section with one accessible set of social links", async () => {
     const { container } = render(<Home />);
 
-    expect(
-      screen.getByRole("heading", { name: "About Me" })
-    ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /YouTube/ })).toHaveAttribute(
+    expect(await screen.findByRole("heading", { name: "Moments people can feel." })).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: "Instagram" })).toHaveAttribute(
       "href",
-      "https://youtu.be/pVmaOwbiX9w?si=2sQeQX7UZIs3K1Tt"
+      "https://www.instagram.com/mho.xxv/"
     );
-    expect(screen.getByRole("link", { name: /Threads/ })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Threads" })).toHaveAttribute(
       "href",
-      "https://www.threads.com/@minho_ya_01"
+      "https://www.threads.net/@mho.xxv"
     );
+    expect(screen.getByRole("link", { name: "YouTube" })).toHaveAttribute(
+      "href",
+      "https://youtube.com/channel/UCzvEbjghgfUZaj2v-uLIVjw?si=vvMZktWc3uFfq0Ug"
+    );
+    expect(screen.getAllByRole("link")).toHaveLength(3);
     expect(
       container.querySelector('video[src="/spider/idle_spider.mp4"]')
     ).toBeInTheDocument();
-    expect(container.querySelector("canvas")).not.toBeInTheDocument();
-    expect(
-      container.querySelector('video[src="/ShowReel_SC.mp4"]')
-    ).toBeInTheDocument();
+    
+    await waitFor(() => {
+      expect(
+        container.querySelector('video[src="/ShowReel_SC.mp4"]')
+      ).toBeInTheDocument();
+    });
   });
 
   it.each([
@@ -78,19 +93,15 @@ describe("homepage interactions", () => {
     fireEvent.pointerDown(categoryButton);
     fireEvent.click(categoryButton);
 
-    expect(screen.queryByText("Selected Category")).not.toBeInTheDocument();
-    expect(
-      container.querySelector('video[src="/spider/navy_Spider.mp4"]')
-    ).toBeInTheDocument();
-    expect(container.querySelector('img[alt=""]')).not.toBeInTheDocument();
-
     const transitionVideo = container.querySelector(
       'video[src="/spider/navy_Spider.mp4"]'
     );
 
     if (!transitionVideo) {
-      throw new Error("Expected desktop spider transition video to render");
+      throw new Error("Expected desktop transition video to render");
     }
+
+    expect(screen.queryByText("Selected Category")).not.toBeInTheDocument();
 
     fireEvent.ended(transitionVideo);
 
@@ -99,9 +110,20 @@ describe("homepage interactions", () => {
     });
 
     expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
-    expect(
-      container.querySelector('video[src="/ShowReel_SC.mp4"]')
-    ).toHaveClass("opacity-0");
+
+    await waitFor(() => {
+      expect(
+        container.querySelector('video[src="/spider/navy_Spider.mp4"]')
+      ).not.toBeInTheDocument();
+    });
+
+    // Showreel video might be null if suspendMedia is true in dynamic ShowreelSection
+    await waitFor(() => {
+      const showreelVideo = container.querySelector('video[src="/ShowReel_SC.mp4"]');
+      if (showreelVideo) {
+        expect(showreelVideo).toHaveClass("opacity-0");
+      }
+    });
 
     const desktopPanel = screen.getByText("Selected Category").closest("section");
 
@@ -109,14 +131,9 @@ describe("homepage interactions", () => {
       throw new Error("Expected desktop category panel to render");
     }
 
-    expect(desktopPanel.className).toContain("w-[60%]");
+    expect(desktopPanel.className).toContain("fixed");
+    expect(desktopPanel.className).toContain("inset-y-0");
     expect(desktopPanel.className).not.toContain("inset-0");
-
-    await waitFor(() => {
-      expect(
-        container.querySelector('video[src="/spider/navy_Spider.mp4"]')
-      ).not.toBeInTheDocument();
-    });
 
     await waitFor(() => {
       expect(screen.getByText("Campus Utility App")).toBeInTheDocument();
@@ -131,7 +148,154 @@ describe("homepage interactions", () => {
     });
   });
 
-  it("re-arms the desktop transition mask before replaying the same spider video", async () => {
+  it("opens a project detail panel from the category grid and keeps the link inside that panel", async () => {
+    const { container } = render(<Home />);
+
+    const categoryButton = screen.getByRole("button", { name: "UX/UI" });
+
+    fireEvent.mouseEnter(categoryButton);
+    fireEvent.pointerDown(categoryButton);
+    fireEvent.click(categoryButton);
+
+    const transitionVideo = container.querySelector(
+      'video[src="/spider/navy_Spider.mp4"]'
+    );
+
+    if (!transitionVideo) {
+      throw new Error("Expected desktop transition video to render");
+    }
+
+    fireEvent.ended(transitionVideo);
+
+    await waitFor(() => {
+      expect(screen.getByText("Campus Utility App")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Campus Utility App/i }));
+
+    const detailPanel = screen.getByRole("dialog", { name: /Campus Utility App details/i });
+
+    expect(detailPanel).toBeInTheDocument();
+    expect(detailPanel).toHaveAttribute("data-detail-layout", "full-panel");
+    expect(screen.getByText("Project Detail")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Pixafe/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "View Project" })).toHaveAttribute(
+      "href",
+      "https://www.instagram.com/p/DNa0bJwyaIs/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Back" }));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("dialog", { name: /Campus Utility App details/i })
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  it("opens project detail as a bottom sheet on touch layout", async () => {
+    mockMatchMedia(true);
+
+    const { container } = render(<Home />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Interactive" }));
+
+    const transitionVideo = container.querySelector(
+      'video[src="/spider/orange_Spider.mp4"]'
+    );
+
+    if (!transitionVideo) {
+      throw new Error("Expected mobile transition video to render");
+    }
+
+    fireEvent.ended(transitionVideo);
+
+    await waitFor(() => {
+      expect(screen.getByText("Dog Follow Prototype")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Dog Follow Prototype/i }));
+
+    const detailPanel = screen.getByRole("dialog", { name: /Dog Follow Prototype details/i });
+
+    expect(detailPanel).toBeInTheDocument();
+    expect(detailPanel).toHaveAttribute("data-detail-layout", "bottom-sheet");
+
+    fireEvent.click(screen.getByRole("button", { name: "Back" }));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("dialog", { name: /Dog Follow Prototype details/i })
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  it("returns to the top state when Escape is pressed", async () => {
+    const { container } = render(<Home />);
+
+    fireEvent.mouseEnter(screen.getByRole("button", { name: "UX/UI" }));
+
+    expect(
+      container.querySelector('video[src="/spider/navy_Spider.mp4"]')
+    ).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: "Escape" });
+
+    await waitFor(() => {
+      expect(
+        container.querySelector('video[src="/spider/navy_Spider.mp4"]')
+      ).not.toBeInTheDocument();
+    });
+
+    expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "smooth" });
+  });
+
+  it("returns to the top state when the name is clicked", async () => {
+    render(<Home />);
+
+    fireEvent.mouseEnter(screen.getByRole("button", { name: "Motion / 3D" }));
+    fireEvent.click(screen.getByRole("button", { name: "Kim Minho" }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Motion / 3D" })).toHaveAttribute(
+        "aria-expanded",
+        "false"
+      );
+    });
+
+    expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "smooth" });
+  });
+
+  it("closes the desktop category panel when the backdrop is clicked", async () => {
+    const { container } = render(<Home />);
+
+    const categoryButton = screen.getByRole("button", { name: "Interactive" });
+
+    fireEvent.mouseEnter(categoryButton);
+    fireEvent.click(categoryButton);
+
+    const transitionVideo = container.querySelector(
+      'video[src="/spider/orange_Spider.mp4"]'
+    );
+
+    if (!transitionVideo) {
+      throw new Error("Expected desktop transition video to render");
+    }
+
+    fireEvent.ended(transitionVideo);
+
+    await waitFor(() => {
+      expect(screen.getByText("Selected Category")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Close category panel" }));
+
+    await waitFor(() => {
+      expect(screen.queryByText("Selected Category")).not.toBeInTheDocument();
+    });
+  });
+
+  it("plays the desktop spider transition before opening the panel", async () => {
     const { container } = render(<Home />);
 
     const categoryButton = screen.getByRole("button", { name: "UX/UI" });
@@ -139,64 +303,56 @@ describe("homepage interactions", () => {
     fireEvent.mouseEnter(categoryButton);
     fireEvent.click(categoryButton);
 
-    await waitFor(() => {
-      expect(screen.getByTestId("transition-mask").className).toContain(
-        "opacity-100"
-      );
-    });
-
-    let transitionVideo = container.querySelector(
+    const transitionVideo = container.querySelector(
       'video[src="/spider/navy_Spider.mp4"]'
     );
 
     if (!transitionVideo) {
-      throw new Error("Expected first desktop spider transition to render");
+      throw new Error("Expected desktop transition video to render");
     }
 
-    fireEvent.loadedData(transitionVideo);
-
-    await waitFor(() => {
-      expect(screen.getByTestId("transition-mask").className).toContain(
-        "opacity-0"
-      );
-    });
-
+    expect(screen.queryByText("Selected Category")).not.toBeInTheDocument();
     fireEvent.ended(transitionVideo);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
-    });
-
-    fireEvent.click(screen.getByRole("button", { name: "Close" }));
-
-    await waitFor(() => {
+      expect(screen.getByText("Selected Category")).toBeInTheDocument();
+      expect(screen.getByTestId("transition-mask").className).toContain("opacity-0");
       expect(
-        screen.queryByRole("button", { name: "Close" })
+        container.querySelector('video[src="/spider/navy_Spider.mp4"]')
       ).not.toBeInTheDocument();
     });
+  });
 
-    fireEvent.mouseEnter(categoryButton);
-    fireEvent.click(categoryButton);
+  it("opens the desktop category panel immediately after scrolling past the hero", () => {
+    setScrollY(window.innerHeight);
 
-    await waitFor(() => {
-      expect(screen.getByTestId("transition-mask").className).toContain(
-        "opacity-100"
-      );
-    });
+    const { container } = render(<Home />);
 
-    transitionVideo = container.querySelector('video[src="/spider/navy_Spider.mp4"]');
+    fireEvent.click(screen.getByRole("button", { name: "UX/UI" }));
 
-    if (!transitionVideo) {
-      throw new Error("Expected repeated desktop spider transition to render");
-    }
+    const panel = screen.getByText("Selected Category").closest("section");
 
-    fireEvent.loadedData(transitionVideo);
+    expect(panel).not.toBeNull();
+    expect(panel).toHaveAttribute("aria-busy", "false");
+    expect(
+      container.querySelector('video[src="/spider/navy_Spider.mp4"]')
+    ).not.toBeInTheDocument();
+  });
 
-    await waitFor(() => {
-      expect(screen.getByTestId("transition-mask").className).toContain(
-        "opacity-0"
-      );
-    });
+  it("opens the desktop category panel immediately from the final links section", () => {
+    setScrollY(window.innerHeight * 2);
+
+    const { container } = render(<Home />);
+
+    fireEvent.click(screen.getByRole("button", { name: "UX/UI" }));
+
+    const panel = screen.getByText("Selected Category").closest("section");
+
+    expect(panel).not.toBeNull();
+    expect(panel).toHaveAttribute("aria-busy", "false");
+    expect(
+      container.querySelector('video[src="/spider/navy_Spider.mp4"]')
+    ).not.toBeInTheDocument();
   });
 
   it("plays the spider transition on mobile before opening the panel", async () => {

@@ -33,7 +33,7 @@ export function getCategoryBackgroundVideo(
 
 export function getCategoryPreviewImage(category: CategoryInfo | null) {
   return (
-    category?.hoverImage ??
+    category?.preview.find((item) => item.startsWith("/")) ??
     category?.projects.find((project) => project.thumbnail)?.thumbnail ??
     null
   );
@@ -54,10 +54,4 @@ export function getCategoryBackgroundImage(
 
 export function getCategoryBackgroundImageSources(category: CategoryInfo) {
   return filterExistingSources([getCategoryPreviewImage(category)]);
-}
-
-export function getCategoryPanelImageSources(category: CategoryInfo) {
-  return filterExistingSources(
-    category.projects.map((project) => project.thumbnail)
-  );
 }

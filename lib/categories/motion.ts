@@ -11,6 +11,35 @@ const motion: CategoryInfo = {
   hoverVideo: "/apple_locom.mp4",
   projects: [
     {
+      title: "Kim Minho Hanja Graffiti",
+      subtitle: "3D Modeling / Motion / Generative Artwork",
+      description:
+        "나의 이름 김민호의 한문 표기를 기반으로 Midjourney에 그라피티 아트워크를 생성한 뒤, 이를 3D 모델링으로 구체화하고 Blender로 모션까지 확장한 작업입니다. 텍스트 기반의 정체성을 시각적 조형 언어로 번역하고, 다시 움직이는 장면으로 발전시키는 과정을 담았습니다.",
+      thumbnail: "/Graffiti.webp",
+      externalLink: "https://www.threads.com/@minho_ya_01/post/C71AwkNPzw8?xmt=AQG0A_F-yFPK_WIcxbZXSPfJcxBG0LGwxreNyPB3vbBoxQ",
+      linkLabel: "View on Threads",
+      tools: ["Midjourney", "Blender"],
+    },
+    {
+      title: "Bloom",
+      subtitle: "3D Motion / Media Art",
+      description:
+        "대구 미디어아트 프로젝트 <Bloom>. 대구의 대표 축제인 달구벌 풍등축제에서 착안해, 풍등 하나하나에 대구의 매력적인 관광지를 담아 사람들이 이 도시를 직접 방문하길 바라는 의미를 담았습니다. 풍등이 소원을 실어 올리듯, 도시의 기억과 여행의 기대를 함께 띄워 보내는 3D 모션 작업입니다.",
+      thumbnail: "https://img.youtube.com/vi/BvyQOmedkdY/maxresdefault.jpg",
+      externalLink: "https://youtu.be/BvyQOmedkdY",
+      linkLabel: "Watch Project",
+      tools: ["Blender"],
+    },
+    {
+      title: "AR PJ 1",
+      subtitle: "3D Motion / Visual Experiment",
+      description:
+        "유튜브에 공개한 3D 비주얼 실험 작업. 공간감과 무드 연출에 집중해 짧은 시네마틱 장면을 구성한 모션 프로젝트입니다.",
+      thumbnail: "https://img.youtube.com/vi/V-QcXbkdlkQ/maxresdefault.jpg",
+      externalLink: "https://youtu.be/V-QcXbkdlkQ",
+      linkLabel: "Watch Project",
+    },
+    {
       title: "Apple Commercial Redesign",
       subtitle: "Motion / 3D Experiment",
       description:
@@ -27,6 +56,15 @@ const motion: CategoryInfo = {
       thumbnail: "/eyes.webp",
       externalLink: "https://www.instagram.com/reel/DWaznDCk8Hx/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
       tools: ["Blender"],
+    },
+    {
+      title: "Po-plot Land — World Art Expo 2025",
+      subtitle: "3D Motion / Exhibition",
+      description:
+        "Po-plot 작가와 함께 코엑스 World Art Expo 2025에서 진행한 미디어아트 전시 기획. 20th Century Fox Records 오프닝에서 영감을 받아, Blender Particle 효과와 Mixamo의 10개 이상의 춤 동작을 활용해 춤추는 군중을 표현했습니다.",
+      thumbnail: "/poplot.webp",
+      externalLink: "https://www.threads.com/@minho_ya_01/post/DFceDnXPIEv?xmt=AQG0VjswFDp4ePd40zKikVt7KUezlF-063uynwWU5ixu5g",
+      tools: ["Blender", "Mixamo"],
     },
     {
       title: "Avatar Level Design",

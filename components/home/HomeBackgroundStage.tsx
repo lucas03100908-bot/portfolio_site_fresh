@@ -1,12 +1,16 @@
 "use client";
 
 import { memo, useCallback, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 
 import AnimatedGradientBackground from "@/components/scene/AnimatedGradientBackground";
 import BackgroundVideoLayer from "@/components/scene/BackgroundVideoLayer";
 import AtmosphereLayer from "@/components/scene/AtmosphereLayer";
-import SpotlightLayer from "@/components/scene/SpotlightLayer";
 import { CategoryKey } from "@/lib/types";
+
+const SpotlightLayer = dynamic(() => import("@/components/scene/SpotlightLayer"), {
+  ssr: false,
+});
 
 interface HomeBackgroundStageProps {
   activeCategory?: CategoryKey | null;
@@ -54,6 +58,22 @@ function HomeBackgroundStage({
     return () => window.clearTimeout(timer);
   }, [transitionMaskVisible, backgroundVideoSessionKey]);
 
+  if (panelOpen) {
+    return (
+      <div
+        className="pointer-events-none fixed inset-0 overflow-hidden bg-[#02060b]"
+        suppressHydrationWarning
+      >
+        <div className="absolute inset-0 bg-[#02060b]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(255,255,255,0.035)_0%,transparent_30%),linear-gradient(180deg,rgba(3,6,10,0.12)_0%,rgba(3,6,10,0.38)_52%,rgba(2,5,9,0.9)_100%)]" />
+        <div
+          data-testid="transition-mask"
+          className="pointer-events-none absolute inset-0 bg-[#02060b] opacity-0"
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       className="pointer-events-none fixed inset-0 overflow-hidden bg-[#02060b] transform-gpu"
@@ -87,7 +107,7 @@ function HomeBackgroundStage({
       {/* 4. Interactive: Spotlight (logic isolated) */}
       {!isTouchLayout && (
         <SpotlightLayer 
-          isActive={!isHoveringCategory} 
+          isActive={!isHoveringCategory && !panelOpen} 
           panelOpen={panelOpen} 
         />
       )}

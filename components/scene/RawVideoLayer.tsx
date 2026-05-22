@@ -22,13 +22,7 @@ export function RawVideoLayer({
   preload = "metadata",
 }: RawVideoLayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [lastSrc, setLastSrc] = useState<string | null>(src);
-
-  if (src !== lastSrc) {
-    setIsVisible(false);
-    setLastSrc(src);
-  }
+  const [visibleSrc, setVisibleSrc] = useState<string | null>(null);
 
   const handleVideoPlay = useCallback(async (video: HTMLVideoElement) => {
     if (!video.paused) return;
@@ -43,9 +37,13 @@ export function RawVideoLayer({
     const video = videoRef.current;
     if (!video || !src) return;
 
+    video.defaultMuted = true;
+    video.muted = true;
+    video.playsInline = true;
+
     const handleCanPlay = () => {
       if (isActive) {
-        setIsVisible(true);
+        setVisibleSrc(src);
         onReady?.();
         void handleVideoPlay(video);
       }
@@ -65,8 +63,7 @@ export function RawVideoLayer({
     if (video.getAttribute("data-src") !== src) {
       video.setAttribute("data-src", src);
       video.src = src;
-      // Use standard load only when necessary
-      if (isActive || preload === "auto") {
+      if (isActive || preload !== "none") {
         video.load();
       }
     } else if (isActive) {
@@ -91,12 +88,14 @@ export function RawVideoLayer({
   return (
     <video
       ref={videoRef}
+      autoPlay
       muted
       playsInline
+      disablePictureInPicture
       loop={!playOnce}
       preload={preload}
       className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-in-out ${
-        isActive && isVisible ? "opacity-100" : "opacity-0"
+        isActive && visibleSrc === src ? "opacity-100" : "opacity-0"
       } ${isTransition ? "z-10" : "z-0"}`}
     />
   );

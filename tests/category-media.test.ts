@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import { categoryMap } from "@/lib/categories";
 import {
-  getCategoryBackgroundImage,
   getCategoryBackgroundVideo,
   getCategoryPreviewImage,
 } from "@/lib/category-media";
@@ -33,11 +32,7 @@ describe("category media selection", () => {
       })
     ).toBe("/spider/orange_Spider.mp4");
 
-    expect(
-      getCategoryBackgroundImage(categoryMap.interactive, {
-        panelOpen: false,
-      })
-    ).toBe("/dog_proto.webp");
+    expect(getCategoryPreviewImage(categoryMap.interactive)).toBe("https://img.youtube.com/vi/3htRZNJ78uM/maxresdefault.jpg");
 
     expect(
       getCategoryBackgroundVideo(categoryMap.interactive, {
@@ -48,12 +43,6 @@ describe("category media selection", () => {
   });
 
   it("uses the curated hover image when mobile categories do not have a hover video", () => {
-    expect(getCategoryPreviewImage(categoryMap.planning)).toBe("/avatar2.webp");
-
-    expect(
-      getCategoryBackgroundImage(categoryMap.planning, {
-        panelOpen: false,
-      })
-    ).toBe("/avatar2.webp");
+    expect(getCategoryPreviewImage(categoryMap.planning)).toBe("/najeonS.webp");
   });
 });

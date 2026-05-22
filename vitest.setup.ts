@@ -24,44 +24,33 @@ vi.mock("next/image", () => ({
   },
 }));
 
-vi.mock("next/dynamic", async () => {
-  const react = await import("react");
-
+vi.mock("next/dynamic", () => {
   return {
-    default: (
-      loader: () => Promise<{ default: React.ComponentType<Record<string, unknown>> }>,
-      options?: { loading?: () => React.ReactNode }
-    ) => {
-      function DynamicComponent(props: Record<string, unknown>) {
-        const [Component, setComponent] = react.useState<React.ComponentType<Record<string, unknown>> | null>(null);
+    default: (loader: () => Promise<{ default: React.ComponentType<Record<string, unknown>> }>) => {
+      const DynamicComponent = (props: Record<string, unknown>) => {
+        const [Component, setComponent] = React.useState<React.ComponentType<Record<string, unknown>> | null>(null);
 
-        react.useEffect(() => {
-          let active = true;
-
-          loader().then((module) => {
-            if (active) {
-              setComponent(() => module.default);
-            }
+        React.useEffect(() => {
+          loader().then((mod) => {
+            setComponent(() => mod.default);
           });
-
-          return () => {
-            active = false;
-          };
         }, []);
 
-        if (!Component) {
-          return options?.loading ? React.createElement(React.Fragment, null, options.loading()) : null;
-        }
-
+        if (!Component) return null;
         return React.createElement(Component, props);
-      }
-
+      };
       DynamicComponent.displayName = "MockDynamicComponent";
-
       return DynamicComponent;
     },
   };
 });
+
+vi.mock("@/components/ui/spider-thermal-effect", () => ({
+  SpiderThermalEffect: () =>
+    React.createElement("div", {
+      "data-testid": "spider-thermal-effect",
+    }),
+}));
 
 beforeAll(() => {
   vi.stubGlobal(
@@ -107,13 +96,16 @@ beforeAll(() => {
 
       disconnect() {}
       observe(target: Element) {
+        const isProfileSection = target instanceof HTMLElement && target.id === "about";
+        const rect = target.getBoundingClientRect();
+
         this.callback(
           [
             {
-              boundingClientRect: target.getBoundingClientRect(),
-              intersectionRatio: 1,
-              intersectionRect: target.getBoundingClientRect(),
-              isIntersecting: true,
+              boundingClientRect: rect,
+              intersectionRatio: isProfileSection ? 0 : 1,
+              intersectionRect: rect,
+              isIntersecting: !isProfileSection,
               rootBounds: null,
               target,
               time: Date.now(),

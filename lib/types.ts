@@ -18,7 +18,6 @@ export type CategoryInfo = {
   description: string;
   preview: string[];
   transitionVideo?: string;
-  hoverImage?: string;
   hoverVideo?: string;
   projects: ProjectItem[];
   color: string;

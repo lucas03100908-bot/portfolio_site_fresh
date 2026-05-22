@@ -11,6 +11,16 @@ const interactive: CategoryInfo = {
   hoverVideo: "/Prototype_1.mp4",
   projects: [
     {
+      title: "Burt's Bee Target: Interactive Table Service",
+      subtitle: "Interactive Media Art / Brand Experience",
+      description:
+        "버츠비 팝업스토어를 가정하여, 브랜드 경험을 확장하는 인터랙티브 미디어아트를 기획하고 제작했습니다. 환절기마다 입술이 건조해질 때 개인적으로 자주 사용하던 브랜드였기 때문에 버츠비를 선정했고, 브랜드의 핵심 이미지인 꿀벌과 Hive를 인터랙션 요소로 활용했습니다. 방문자는 팝업스토어 안에서 꿀벌이 되어 Hive를 움직이며, 단순한 제품 체험을 넘어 브랜드의 자연적이고 따뜻한 세계관을 직접 경험하게 됩니다.",
+      thumbnail: "https://img.youtube.com/vi/3htRZNJ78uM/maxresdefault.jpg",
+      externalLink: "https://youtube.com/shorts/3htRZNJ78uM?si=YZFLcIkCUuMpSeRY",
+      linkLabel: "Watch Project",
+      tools: ["TouchDesigner"],
+    },
+    {
       title: "Dog Follow Prototype",
       subtitle: "Branding / Interactive Media Art / UX Design",
       description:
@@ -36,6 +46,16 @@ const interactive: CategoryInfo = {
         "IDAS 김보연 교수님 이론을 반영했습니다. Design is to V(디자인은 동사다) 라는 이론으로 접근하여 Design is to Attract로 시작했음. 무표정사회라는 문제점을 해결하기 위해 디지털 옥외광고 메체를 가져와 지나가는 사람이 보고 웃을 수 있도록 유도. 부산 사투리를 사용해 다소 건방진 말투를 보여줌으로 관객에게있어서 피식 웃을 수 있게끔 유도하는것이 최종 목표. 웃거나, 슬플거나 화날때 표정 값을 가져와 각각 다른 비주얼을 보여주고 피식이 아니라 더 크게 웃는다면 다른 비주얼을 볼 수 있음 ",
       thumbnail: "/Emotion_TD.webp",
       externalLink: "https://www.threads.com/@minho_ya_01/post/DJPCmufhkbI?xmt=AQF02ww3hEPdsK5PkzoaFUWyh1wDrwAUc5x3UE6Yqr4Lgg",
+      tools: ["TouchDesigner"],
+    },
+    {
+      title: "Fluid AudioReactive",
+      subtitle: "Realtime Visual / TouchDesigner",
+      description:
+        "TouchDesigner로 구현한 실시간 오디오 리액티브 유체 시뮬레이션. 음악의 주파수와 진폭 데이터를 실시간으로 분석하여 유체의 흐름과 밀도가 사운드에 반응하도록 설계했습니다. 청각 정보를 시각적 물성으로 변환하는 과정에 집중한 작업입니다.",
+      thumbnail: "https://img.youtube.com/vi/hoU5xjEDC1c/maxresdefault.jpg",
+      externalLink: "https://youtu.be/hoU5xjEDC1c?si=bU2ztF4xG9ArN5Kq",
+      linkLabel: "Watch Project",
       tools: ["TouchDesigner"],
     },
     {

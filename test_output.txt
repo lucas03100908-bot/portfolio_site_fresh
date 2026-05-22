@@ -1,0 +1,16 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.4 [39m[90m/Users/kimminho/Desktop/portfolio_site_fresh[39m
+
+Not implemented: HTMLMediaElement's pause() method
+Not implemented: HTMLMediaElement's pause() method
+Not implemented: HTMLMediaElement's pause() method
+Not implemented: HTMLMediaElement's pause() method
+ [32m✓[39m tests/homepage.test.tsx [2m([22m[2m15 tests[22m[2m | [22m[33m13 skipped[39m[2m)[22m[33m 2543[2mms[22m[39m
+     [33m[2m✓[22m[39m opens the category panel on click and closes it again [33m 1217[2mms[22m[39m
+     [33m[2m✓[22m[39m opens a project detail panel from the category grid and keeps the link inside that panel [33m 1321[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m2 passed[39m[22m[2m | [22m[33m13 skipped[39m[90m (15)[39m
+[2m   Start at [22m 16:39:10
+[2m   Duration [22m 5.69s[2m (transform 573ms, setup 339ms, import 745ms, tests 2.54s, environment 1.33s)[22m
+

@@ -3,19 +3,14 @@
 import { useEffect, useState } from "react";
 
 const MOBILE_INTERACTION_QUERY =
-  "(max-width: 1199px), ((hover: none) and (pointer: coarse))";
+  "(max-width: 1023px), ((hover: none) and (pointer: coarse))";
 
 /**
  * Hook to detect if the current layout should be optimized for touch interaction
  * based on screen width and device capabilities.
  */
 export function useTouchLayout() {
-  const [isTouchLayout, setIsTouchLayout] = useState(() => {
-    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
-      return false;
-    }
-    return window.matchMedia(MOBILE_INTERACTION_QUERY).matches;
-  });
+  const [isTouchLayout, setIsTouchLayout] = useState(false);
   const [layoutResolved, setLayoutResolved] = useState(false);
 
   useEffect(() => {

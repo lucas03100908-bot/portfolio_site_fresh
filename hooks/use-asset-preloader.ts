@@ -89,6 +89,12 @@ export function useAssetPreloader() {
       if (preloadPreviewImage && !warmedBackgroundImagesRef.current.has(category)) {
         warmedBackgroundImagesRef.current.add(category);
         getCategoryBackgroundImageSources(data).forEach(preloadImage);
+        // Preload first 3 project card thumbnails so they're cached when panel opens
+        data.projects.slice(0, 3).forEach(({ thumbnail }) => {
+          if (thumbnail && typeof thumbnail === "string" && thumbnail.startsWith("/")) {
+            preloadImage(thumbnail);
+          }
+        });
       }
 
       if (transitionVideoMode && data.transitionVideo) {
